@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 public class Transport
 {
     public string Name { get; set; }
-    public int Speed { get; set; }
+    public double Speed { get; set; }
 
     public Transport(string name)
     {
@@ -17,24 +17,23 @@ public class Transport
 
 public class GroundTransport : Transport
 {
-    private static readonly Random random = new Random();
-
     public int RestStopDistance { get; private set; }
     public int TravelTimeToRest { get; private set; }
     public int RestDuration { get; private set; }
 
-    public GroundTransport(string name) : base(name)
+    public GroundTransport(string name, double speed, int restStopDistance, int travelTimeToRest) : base(name)
     {
-        Speed = random.Next(2, 11);
-        RestStopDistance = random.Next(1, 11);
-        TravelTimeToRest = random.Next(1, 6);
+        Speed = Math.Round(GetAdjustedSpeed(speed, restStopDistance, travelTimeToRest));
+        RestStopDistance = restStopDistance;
+        TravelTimeToRest = travelTimeToRest;
         RestDuration = 2 * RestStopDistance;
     }
 
-    public double GetAdjustedSpeed()
+    private double GetAdjustedSpeed(double initialSpeed, double restStopDistance, double travelTimeToRest)
     {
         double timeToRest = TravelTimeToRest;
-        double adjustedSpeed = Speed - (timeToRest / RestDuration) * Speed;
+        //double adjustedSpeed = initialSpeed - (timeToRest / RestDuration) * initialSpeed;
+        double adjustedSpeed = initialSpeed - timeToRest;
 
         adjustedSpeed = Math.Max(adjustedSpeed, 0);
 
@@ -43,34 +42,20 @@ public class GroundTransport : Transport
 }
 
 
-
 public class AirTransport : Transport
 {
-    private static readonly Random random = new Random();
-
     public double AccelerationCoefficient { get; set; }
     public double StopCoefficient { get; private set; }
 
-    public AirTransport(string name) : base(name)
+    public AirTransport(string name, double speed, double accelerationCoefficient) : base(name)
     {
-        Speed = GenerateRandomSpeed();
-        AccelerationCoefficient = GenerateRandomAccelerationCoefficient();
-        StopCoefficient = CalculateStopCoefficient(AccelerationCoefficient);
+        Speed = Math.Round(CalculateStopCoefficient(speed, accelerationCoefficient)); ;
+        AccelerationCoefficient = accelerationCoefficient;
     }
 
-    private int GenerateRandomSpeed()
+    private double CalculateStopCoefficient(double speed ,double accelerationCoefficient)
     {
-        return random.Next(1, 11);
-    }
-
-    private double GenerateRandomAccelerationCoefficient()
-    {
-        return random.NextDouble() * (5.0 - 1.0) + 1.0;
-    }
-
-    private double CalculateStopCoefficient(double accelerationCoefficient)
-    {
-        return accelerationCoefficient / 2.0;
+        return speed * accelerationCoefficient / 2.0;
     }
 }
 

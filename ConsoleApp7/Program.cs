@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
+using System.Security.AccessControl;
 using System.Threading;
 
 class Program
@@ -33,13 +34,18 @@ class Program
 
         RaceType raceType = ChooseRaceType();
 
+       // Console.WriteLine("raceType - " + raceType);
+       // raceType 1 - AirRace
+       // raceType 2 - AllTypesRace
+       // raceType 3 - 3
         int numParticipants = GetNumberOfParticipants();
+
 
         var participants = new List<Transport>();
         for (int i = 0; i < numParticipants; i++)
         {
             Console.WriteLine($"Выберите транспорт для участника {i + 1}:");
-            participants.Add(ChooseTransport(participants));
+            participants.Add(ChooseTransport(participants, raceType));
         }
 
         var raceSimulator = new RaceSimulator(distance, raceType);
@@ -93,7 +99,7 @@ class Program
         return numParticipants;
     }
 
-    static Transport ChooseTransport(List<Transport> participants)
+    static Transport ChooseTransport(List<Transport> participants, Enum raceType)
     {
         Console.Clear();
         Console.WriteLine("Зарегистрированные гонщики:");
@@ -118,24 +124,65 @@ class Program
             }
         }
 
-        Console.WriteLine("\n1. Ступа Бабы Яги");
-        Console.WriteLine("2. Метла");
-        Console.WriteLine("3. Сапоги-скороходы");
-        Console.WriteLine("4. Карета-тыква");
-        Console.WriteLine("5. Ковер-самолет");
-        Console.WriteLine("6. Избушка на курьих ножках");
-        Console.WriteLine("7. Кентавр");
-        Console.WriteLine("8. Летучий корабль");
+        string Choise = raceType.ToString();
 
-        Console.WriteLine("Выберите транспорт (введите число от 1 до 8):");
-        int choice;
-        while (!int.TryParse(Console.ReadLine(), out choice) || choice < 1 || choice > 8)
+        //Костыль 
+        int num_choice;
+        if (Choise == "AirRace")
         {
-            Console.WriteLine("Введите корректное число от 1 до 8:");
-        }
+            Console.WriteLine("1. Сапоги-скороходы");
+            Console.WriteLine("2. Карета-тыква");
+            Console.WriteLine("3. Избушка на курьих ножках");
+            Console.WriteLine("4. Кентавр");
 
-        Console.Clear();
-        return CreateTransport(choice);
+            Console.WriteLine("Выберите транспорт (введите число от 1 до 4):");
+
+            while (!int.TryParse(Console.ReadLine(), out num_choice) || num_choice < 1 || num_choice > 4)
+            {
+                Console.WriteLine("Введите корректное число от 1 до 4:");
+            }
+
+            Console.Clear();
+            return CreateTransport(num_choice);
+        }
+        else if(Choise == "AllTypesRace")
+        {
+            Console.WriteLine("5. Ступа Бабы Яги");
+            Console.WriteLine("6. Метла");
+            Console.WriteLine("7. Ковер-самолет");
+            Console.WriteLine("8. Летучий корабль");
+
+            Console.WriteLine("Выберите транспорт (введите число от 5 до 8):");
+
+            while (!int.TryParse(Console.ReadLine(), out num_choice) || num_choice < 5 || num_choice > 8)
+            {
+                Console.WriteLine("Введите корректное число от 5 до 8:");
+            }
+
+            Console.Clear();
+            return CreateTransport(num_choice);
+        }
+        else if (Choise == "3")
+        {
+            Console.WriteLine("1. Сапоги-скороходы");
+            Console.WriteLine("2. Карета-тыква");
+            Console.WriteLine("3. Избушка на курьих ножках");
+            Console.WriteLine("4. Кентавр");
+            Console.WriteLine("5. Ступа Бабы Яги");
+            Console.WriteLine("6. Метла");
+            Console.WriteLine("7. Ковер-самолет");
+            Console.WriteLine("8. Летучий корабль");
+
+            Console.WriteLine("Выберите транспорт (введите число от 1 до 8):");
+            while (!int.TryParse(Console.ReadLine(), out num_choice) || num_choice < 1 || num_choice > 8)
+            {
+                Console.WriteLine("Введите корректное число от 1 до 8:");
+            }
+
+            Console.Clear();
+            return CreateTransport(num_choice);
+        }
+        return new GroundTransport("Неизвестный транспорт", 0, 0, 0);
     }
 
 
@@ -143,15 +190,15 @@ class Program
     {
         switch (choice)
         {
-            case 1: return new AirTransport("Ступа Бабы Яги");
-            case 2: return new AirTransport("Метла");
-            case 3: return new GroundTransport("Сапоги-скороходы");
-            case 4: return new GroundTransport("Карета-тыква");
-            case 5: return new AirTransport("Ковер-самолет");
-            case 6: return new GroundTransport("Избушка на курьих ножках");
-            case 7: return new GroundTransport("Кентавр");
-            case 8: return new AirTransport("Летучий корабль");
-            default: return new GroundTransport("Неизвестный транспорт");
+            case 1: return new GroundTransport("Сапоги-скороходы",5, 6, 5);
+            case 2: return new GroundTransport("Карета-тыква",5, 3, 1);
+            case 3: return new GroundTransport("Избушка на курьих ножках", 4, 5, 5);
+            case 4: return new GroundTransport("Кентавр", 4,1,3);
+            case 5: return new AirTransport("Ступа Бабы Яги", 2, 2);
+            case 6: return new AirTransport("Метла", 4, 1);
+            case 7: return new AirTransport("Ковер-самолет", 4, 3);
+            case 8: return new AirTransport("Летучий корабль", 5, 4);
+            default: return new GroundTransport("Неизвестный транспорт",0,0,0);
         }
     }
 }

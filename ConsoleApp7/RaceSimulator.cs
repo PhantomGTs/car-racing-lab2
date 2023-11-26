@@ -82,7 +82,7 @@ public class RaceSimulator
             // Движение транспортов
             for (int i = 0; i < participants.Count; i++)
             {
-                positions[i] += participants[i].Speed;
+                positions[i] += (int)participants[i].Speed;
 
                 // Ограничение, чтобы избежать выхода за пределы финиша
                 if (positions[i] > finishPoint)
@@ -155,15 +155,16 @@ public class RaceSimulator
                 nameOccurrences.Add(originalName, 1);
             }
 
-            if (raceType == RaceType.GroundRace && transport is GroundTransport)
-            {
-                incompatibleTransports.Add(transport);
-            }
+           // if (raceType == RaceType.GroundRace && !(transport is GroundTransport))
+           // {
+           //    incompatibleTransports.Add(transport);
+           // }
 
-            if (raceType == RaceType.AirRace && transport is AirTransport)
-            {
-                incompatibleTransports.Add(transport);
-            }
+           // if (raceType == RaceType.AirRace && !(transport is AirTransport))
+           // {
+           //     incompatibleTransports.Add(transport);
+           // }
+
         }
 
         if (incompatibleTransports.Count > 0)
